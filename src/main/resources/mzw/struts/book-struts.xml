@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 后台系统 -->
+	<package name="book" extends="struts-default" namespace="/book">
+		 <interceptors>
+			<interceptor name="ad" class="mzw.interceptor.LoginInterceptor"></interceptor>
+			<interceptor-stack name="ads">
+					<interceptor-ref name="defaultStack"></interceptor-ref>
+					<interceptor-ref name="ad"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="ads"></default-interceptor-ref> 
+		<global-results>
+				<result name="error" type="redirect">/back/login.jsp</result>
+		</global-results>
+		<action name="b_*" class="mzw.action.BookAction" method="{1}">
+			<param name="directory">/back/img</param>
+			<result name="queryAllBookSuccess" type="dispatcher">/back/book/show.jsp</result>
+			<result name="queryAllSecondSuccess">/back/book/update.jsp</result>
+			<result name="updateBookSuccess" type="redirectAction">b_queryAllBook</result>
+			<result name="selectSecondSuccess">/back/book/add.jsp</result>
+			<result name="addBookSuccess" type="redirectAction">b_queryAllBook</result>
+			<result name="deleteBookSuccess" type="redirectAction">b_queryAllBook</result>
+			<result name="searchBookSuccess" type="dispatcher">/back/book/show.jsp</result>
+		</action>
+	</package>		
+	
+	<!-- 前台图书展示 -->
+	<package name="frontbook" extends="struts-default" namespace="/frontbook">
+			<action name="fb_*" class="mzw.action.BookAction" method="{1}">
+					<!-- 随机展示number=2 本书 -->
+					<param name="number">2</param>
+					<param name="newNumber">8</param>
+					<!-- 图书详情 -->
+					<result name="showDetailSuccess"  type="dispatcher">/front/main/book_detail.jsp</result>
+					<!-- 首页 -->
+					<result name="mainSuccess"  type="dispatcher">/front/main/main.jsp</result>
+			</action>
+	</package>	
+</struts>

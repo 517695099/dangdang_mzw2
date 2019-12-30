@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace: 指定当前mapper.xml管理的接口 全限定名
+	注意：一个mapper.xml只能管理一个接口
+-->
+<mapper namespace="mzw.dao.AddressDAO">
+	
+	<!-- 查询旧地址 -->
+	<sql id="addresslogin">
+		id,name,local,phone,zip_code,user_id
+	</sql>
+	<select id="selectAllAddresses" parameterType="String" resultType="Address">
+		select <include refid="addresslogin"/> from dd_address
+		where user_id=#{user_id}
+	</select>
+	<!-- 插入新地址 -->
+	<insert id="insertAddress"   parameterType="Address">
+			insert into dd_address values(#{id},#{name},#{local},#{phone},#{zip_code},#{user_id})
+	</insert>
+	<!-- 修改地址 -->
+	<update id="updateAddress" parameterType="Address">
+			update dd_address
+			<trim prefix="set" suffixOverrides=",">
+					<if test="name!=null">
+							name=#{name},
+					</if>
+					<if test="local!=null">
+							local=#{local},
+					</if>
+					<if test="phone!=null">
+							phone=#{phone},
+					</if>
+					<if test="zip_code!=null">
+							zip_code=#{zip_code}
+					</if>
+			</trim>
+			where id=#{id}
+	</update>
+	<!-- 根据地址id查询一个地址 -->
+	<select id="queryOne"  resultType="Address">
+			select * from dd_address where id=#{id,jdbcType=NULL}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

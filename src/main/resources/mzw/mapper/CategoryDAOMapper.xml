@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace: 指定当前mapper.xml管理的接口 全限定名
+	注意：一个mapper.xml只能管理一个接口
+-->
+<mapper namespace="mzw.dao.CategoryDAO">
+	<resultMap type="Category" id="CategoryResultMap">
+		<id column="c1_id" property="id"/>
+		<result column="c1_name" property="name"/>
+		<result column="c1_levels" property="levels"/>
+		<association property="cate" javaType="Category">
+			<id column="c2_id" property="id"/>
+			<result column="parent_name" property="name"/>
+		</association>
+	</resultMap>
+	<!-- 展示所有分类 -->
+	<select id="queryAll"  resultMap="CategoryResultMap">
+		select c1.id c1_id,c1.name c1_name,c1.levels c1_levels,c2.id c2_id,c2.name as parent_name from dd_category c1
+		left join dd_category c2
+		on c2.id=c1.parent_id
+	</select>
+	<!-- 查询所有该级分类 -->
+	<select id="queryCategory" resultType="Category">
+		select id,name,parent_id,levels from dd_category
+		where levels=#{levels}
+	</select>
+	<!-- 添加一级类别 -->
+	<insert id="addFirst" parameterType="Category">
+		insert into dd_category values(#{id},#{name},#{parent_id,jdbcType=NULL},#{levels})
+	</insert>
+	
+	<!-- 添加二级类别 -->
+	<insert id="addSecond" parameterType="Category">
+		insert into dd_category values(#{id},#{name},#{parent_id},#{levels})
+	</insert>
+	
+	<!-- 查询是否存在该级类别 -->
+	<select id="selectClass" resultType="Category">
+		select id,name,parent_id,levels from dd_category where levels=#{levels} and name=#{name}
+	</select>
+	
+	
+	<resultMap type="Category" id="CategoryBook">
+		<id column="c_id" property="id"/>
+		<result column="c_name" property="name"/>
+		<result column="c_levels" property="levels"/>
+		<collection property="books" ofType="Book">
+			<id column="b_id" property="id"/>
+			<result column="b_cover" property="cover"/>
+			<result column="b_name" property="name"/>
+			<result column="b_author" property="author"/>
+			<result column="b_press" property="press"/>
+			<result column="b_press_date" property="press_date"/>
+			<result column="b_content_abstract" property="content_abstract"/>
+		</collection>
+	</resultMap>
+	<!-- 查询该二级类别是否存在图书 --> <!-- 查询该二级分类下所有的图书 -->
+	<select id="selectSecond" resultMap="CategoryBook">
+		select c.id c_id,c.name c_name,c.levels c_levels,b.id b_id,b.cover b_cover,b.name b_name,b.author b_author,b.press b_press,b.press_date b_press_date,b.content_abstract b_content_abstract
+		 from dd_category c left join dd_book b on c.id=b.category_id
+		 <trim prefix="where" prefixOverrides="and">
+		 			<if test="levels!=null">
+		 					c.levels=#{levels}
+		 			</if>
+		 			<if test="id!=null">
+		 					and c.id=#{id}
+		 			</if>
+		 </trim>
+		<!--  where c.levels=#{levels} and c.id=#{id} -->
+	</select>
+	<!-- 删除类别 -->
+	<delete id="deleteCategory">
+		delete from dd_category where id=#{id}
+	</delete>
+	
+	
+	<!-- 前台展示所有类别 -->
+	<resultMap type="Category" id="FrontCategory">
+			<id column="c2_id" property="id"/>
+			<result column="c2_name" property="name"/>
+			<result column="c2_levels" property="levels"/>
+			<collection property="categories" ofType="Category">
+					<id column="c1_id" property="id"/>
+					<result column="c1_name" property="name"/>
+					<result column="c1_parent_id" property="parent_id"/>
+					<result column="c1_levels" property="levels"/>
+			</collection>
+	</resultMap>
+	<select id="queryFirAndSec" resultMap="FrontCategory">
+			select c2.id c2_id,c2.name c2_name,c2.levels c2_levels,c1.id c1_id,c1.name c1_name,c1.parent_id c1_parent_id,c1.levels c1_levels from dd_category c1
+			full outer join dd_category c2 on c1.parent_id=c2.id
+			where c2.levels='1'
+	</select>
+	
+	
+	<resultMap type="Category" id="FrontSec">
+		<id column="f_id" property="id"/>
+		<result column="f_name" property="name"/>
+		<result column="f_parent_id" property="parent_id"/>
+		<result column="f_levels" property="levels"/>
+		<collection property="categories" ofType="Category">
+			<id column="s_id" property="id"/>
+			<result column="s_name" property="name"/>
+			<result column="s_parent_id" property="parent_id"/>
+			<result column="s_levels" property="levels"/>
+		</collection>
+	</resultMap>
+	<!-- 查询当前一级分类下所有二级分类 -->
+	<select id="queryFrontSec" resultMap="FrontSec">
+			select f.id f_id,f.name f_name,f.parent_id f_parent_id,f.levels f_levels,
+			          s.id s_id,s.name s_name,s.parent_id s_parent_id,s.levels s_levels from dd_category f
+			left join dd_category s on f.id=s.parent_id
+			where f.levels=1  and f.id=#{fid}
+	</select>
+	
+	
+	
+	<!-- 分页查询该二级分类下所有的图书 -->
+	<resultMap type="Category" id="CategoryBookFY">
+		<id column="c_id" property="id"/>
+		<result column="c_name" property="name"/>
+		<result column="c_levels" property="levels"/>
+		<result column="c_parent_id" property="parent_id"/>
+		<collection property="books" ofType="Book">
+			<id column="b_id" property="id"/>
+			<result column="b_cover" property="cover"/>
+			<result column="b_name" property="name"/>
+			<result column="b_author" property="author"/>
+			<result column="b_press" property="press"/>
+			<result column="b_press_date" property="press_date"/>
+			<result column="b_content_abstract" property="content_abstract"/>
+			<result column="b_price" property="price"/>
+			<result column="b_dprice" property="dprice"/>
+			<result column="b_editor_recommend" property="editor_recommend"/>
+		</collection>
+	</resultMap>
+	<select id="selectSecondFY" resultMap="CategoryBookFY">
+		select * from
+		(select rownum r,t.* from 
+		(select c.id c_id,c.name c_name,c.levels c_levels,c.parent_id c_parent_id,b.id b_id,b.cover b_cover,b.name b_name,
+		b.author b_author,b.press b_press,b.press_date b_press_date,b.content_abstract b_content_abstract,
+		b.price b_price,b.dprice b_dprice,b.editor_recommend b_editor_recommend
+		from dd_category c left join dd_book b on c.id=b.category_id
+		where c.levels='2' and c.id= #{id})t)
+		where r between #{begin} and #{end}
+	</select>
+	
+	<!-- 查询当前二级类别下有多少本书 -->
+	<select id="count" resultType="Integer">
+			select  count(*)
+			from dd_category c left join dd_book b on c.id=b.category_id
+			where c.levels='2' and c.id=#{id}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

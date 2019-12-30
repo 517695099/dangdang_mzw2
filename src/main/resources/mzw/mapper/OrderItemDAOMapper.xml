@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace: 指定当前mapper.xml管理的接口 全限定名
+	注意：一个mapper.xml只能管理一个接口
+-->
+<mapper namespace="mzw.dao.OrderItemDAO">
+	<!-- 批量插入订单项 -->
+	<insert id="insertOrderItems"  parameterType="java.util.List" useGeneratedKeys="false">
+				INSERT ALL
+			<foreach collection="list" item="item"  separator=" "  >
+				 into dd_item values (#{item.id},#{item.book_id},#{item.order_id},#{item.count},#{item.create_date},#{item.name},#{item.price},#{item.dprice},#{item.cover})
+			</foreach>
+			SELECT 1 FROM DUAL
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

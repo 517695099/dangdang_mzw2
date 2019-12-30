@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace: 指定当前mapper.xml管理的接口 全限定名
+	注意：一个mapper.xml只能管理一个接口
+-->
+<mapper namespace="mzw.dao.BookDAO">
+	<!-- 根据Id删除图书 -->
+	<delete id="removeBook">
+		delete from dd_book where id=#{id}
+	</delete>
+	
+	<!-- 添加图书 -->
+	<insert id="addBook" parameterType="Book">
+		insert into dd_book values(#{id},#{name},#{author},#{cover},#{press},#{press_date},#{edition,jdbcType=NULL},#{print_date,jdbcType=NULL},#{impression,jdbcType=NULL},#{isbn,jdbcType=NULL},#{word_num,jdbcType=NULL},#{page_num,jdbcType=NULL},#{sizes,jdbcType=NULL},#{paper,jdbcType=NULL},#{pack,jdbcType=NULL},#{price},#{dprice,jdbcType=NULL},#{create_date,jdbcType=NULL},#{editor_recommend,jdbcType=NULL},#{content_abstract,jdbcType=NULL},#{author_abstract,jdbcType=NULL},#{directory,jdbcType=NULL},#{media_commentary,jdbcType=NULL},#{category_id,jdbcType=NULL},#{sale,jdbcType=NULL},#{stock,jdbcType=NULL})
+	</insert>
+	<!-- 查询所有图书信息 -->
+	<sql id="bookquery">
+		id,name,author,cover,press,press_date,edition,print_date,impression,isbn,word_num,page_num,sizes,paper,pack,price,dprice,create_date,editor_recommend,content_abstract,author_abstract,directory,media_commentary,category_id,sale,stock
+	</sql>
+	<select id="queryAllBook" parameterType="Book" resultType="Book">
+		select <include refid="bookquery"/> from dd_book
+		<trim prefix="where"  prefixOverrides="and">
+			<if test="id!=null">
+				id=#{id}	
+			</if>
+		</trim>
+	</select>
+	<!-- 下拉列表搜索图书 -->
+	<select id="search" resultType="Book">
+		select <include refid="bookquery"/> from dd_book
+		where ${key} like '%'||#{val}||'%'
+	</select>
+	<!-- 修改图书信息 -->
+	<update id="updateBook" parameterType="Book">
+		update dd_book
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name!=null">
+				name=#{name},
+			</if>
+			<if test="author!=null">
+				author=#{author},
+			</if>
+			<if test="cover!=null">
+				cover=#{cover},
+			</if>
+			<if test="press!=null">
+				press=#{press},
+			</if>
+			<if test="press_date!=null">
+				press_date=#{press_date},
+			</if>
+			<if test="edition!=null">
+				edition=#{edition},
+			</if>
+			<if test="print_date!=null">
+				print_date=#{print_date},
+			</if>
+			<if test="impression!=null">
+				impression=#{impression},
+			</if>
+			<if test="isbn!=null">
+				isbn=#{isbn},
+			</if>
+			<if test="word_num!=null">
+				word_num=#{word_num},
+			</if>
+			<if test="page_num!=null">
+				page_num=#{page_num},
+			</if>
+			<if test="sizes!=null">
+				sizes=#{sizes},
+			</if>
+			<if test="paper!=null">
+				paper=#{paper},
+			</if>
+			<if test="pack!=null">
+				pack=#{pack},
+			</if>
+			<if test="price!=null">
+				price=#{price},
+			</if>
+			<if test="dprice!=null">
+				dprice=#{dprice},
+			</if>
+			<if test="create_date!=null">
+				create_date=#{create_date},
+			</if>
+			<if test="editor_recommend!=null">
+				editor_recommend=#{editor_recommend},
+			</if>
+			<if test="content_abstract!=null">
+				content_abstract=#{content_abstract},
+			</if>
+			<if test="author_abstract!=null">
+				author_abstract=#{author_abstract},
+			</if>
+			<if test="directory!=null">
+				directory=#{directory},
+			</if>
+			<if test="media_commentary!=null">
+				media_commentary=#{media_commentary},
+			</if>
+			<if test="category_id!=null">
+				category_id=#{category_id},
+			</if>
+			<if test="sale!=null">
+				sale=#{sale},
+			</if>
+			<if test="stock!=null">
+				stock=#{stock}
+			</if>
+		</trim> 
+		where id=#{id}
+	</update>
+	<!-- 编辑推荐 -->
+	<select id="randomShow"  parameterType="Integer" resultType="Book">
+			select * from
+ 			(select * from dd_book order by dbms_random.value) 
+ 			where rownum &lt;=#{number}
+	</select>
+	<!--  根据单个条件展示newNumber条数据 -->
+	<select id="newShow" resultType="Book" >
+		 select * from
+		 (select rownum r,t1.* from
+ 		(select * from dd_book order by ${term} desc)t1)
+ 		where r&lt;=#{newNumber}
+	</select>
+	<!-- 根据上架时间和销量展示newNumber条数据 -->
+	<select id="newTwoShow" resultType="Book">
+		 select * from 
+		 ( select rownum r,t2.* from
+ 		( select t1.* from
+ 		(select * from dd_book order by ${create_date} desc)t1 order by ${sale} desc)t2)
+ 		where r&lt;=#{newNumber}
+	</select>
+	
+	<select id="queryFirstBook"  resultType="Book">
+			select db.* from dd_category dc
+			join dd_book db on dc.id=db.category_id
+			where dc.parent_id=#{parent_id}	
+	</select>
+	<!-- 查询当前一级类别下有几本图书 -->
+	<select id="count" resultType="Integer">
+			select count(id) from dd_book 
+					<where>
+							<choose>
+									<when test="sid==null||sid==''">
+											category_id in(select id from dd_category where parent_id=#{fid})
+									</when>
+									<otherwise>
+											category_id=#{sid}
+									</otherwise>
+							</choose>
+					</where>
+	</select>
+	
+	<!-- 根据id查看一本图书 -->
+	<select id="queryOneBook"  resultType="Book">
+			select * from dd_book where id=#{id}
+	</select>
+	<select id="selectSecond"  resultType="Book">
+			select * from(select b.*,rownum r from(
+				select id,name,price,dprice,author,press_date,editor_recommend,cover,press from dd_book
+					<where>
+							<choose>
+									<when test="sid==null||sid==''">
+											category_id in(select id from dd_category where parent_id=#{fid})
+									</when>
+									<otherwise>
+											category_id=#{sid}
+									</otherwise>
+							</choose>
+					</where>)b)
+			 where r between #{begin} and #{end}
+	</select>
+	
+	<update id="updateList"   parameterType="java.util.List">
+			
+					<foreach collection="list"  item="item"  index="index" separator=";"  open="begin"  close=";end;">
+							update dd_book
+							<set>
+									<if test="item.sale!=null and  item.sale!=''">
+											sale=#{item.sale},
+									</if>
+									<if test="item.stock!=null and item.stock!=''">
+											stock=#{item.stock}
+									</if>
+							</set>
+							where id=#{item.id}
+					</foreach>
+			
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+		<include file="interceptor-struts.xml"></include>
+		<package name="cart" extends="inter" namespace="/cart">
+				<action name="c_*" class="mzw.action.CartAction" method="{1}">
+						<result name="addCartSuccess" type="redirect">/front/cart/cart_list.jsp</result>
+						<result name="removeCartItemSuccess" type="redirect">/front/cart/cart_list.jsp</result>
+						<result name="changeSuccess"  type="dispatcher">/front/cart/cart_list.jsp</result>
+						<result name="changeError" type="dispatcher">/front/cart/cart_list.jsp</result>
+				</action>
+				<action name="ca_*" class="mzw.action.CartAction" method="{1}">
+						<interceptor-ref name="myStack"></interceptor-ref>
+						<result name="active" type="redirectAction">
+									<param name="namespace">/frontuser</param>
+									<param name="actionName">fu_sendEmail</param>
+						</result>
+						<result name="login"  type="redirect">/front/user/login_form.jsp</result>
+						<result name="oldAddressSuccess">/front/order/address_form.jsp</result>
+						<result name="placeOrderSuccess">/front/order/order_ok.jsp</result>
+				</action>
+		</package>	
+</struts>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<properties resource="jdbc.properties"></properties>
+	<settings>
+			<setting name="logImpl" value="LOG4J"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="mzw.entity.User" alias="User"/>
+		<typeAlias type="mzw.entity.Admin" alias="Admin"/>
+		<typeAlias type="mzw.entity.Address" alias="Address"/>
+		<typeAlias type="mzw.entity.Category" alias="Category"/>
+		<typeAlias type="mzw.entity.Order" alias="Order"/>
+		<typeAlias type="mzw.entity.OrderItem" alias="OrderItem"/>
+		<typeAlias type="mzw.entity.Book" alias="Book"/>
+	</typeAliases>
+	<environments default="oracle">
+		<environment id="oracle">
+	
+			<transactionManager type="JDBC" />
+
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"></property>
+				<property name="url" value="${url}"></property>
+				<property name="username" value="${username}"></property>
+				<property name="password" value="${password}"></property>
+			</dataSource>
+		</environment>
+	</environments>
+
+	<mappers> 
+		<!-- 用户 -->
+		<mapper resource="mzw/mapper/UserDAOMapper.xml"/>
+		<!-- 管理员 -->
+		<mapper resource="mzw/mapper/AdminDAOMapper.xml"/>
+		<!-- 地址 -->
+		<mapper resource="mzw/mapper/AddressDAOMapper.xml"/>
+		<!-- 类别 -->
+		<mapper resource="mzw/mapper/CategoryDAOMapper.xml"/>
+		<!-- 订单 -->
+		<mapper resource="mzw/mapper/OrderDAOMapper.xml"/>
+		<!-- 订单项 -->
+		<mapper resource="mzw/mapper/OrderItemDAOMapper.xml"/>
+		<!-- 图书 -->
+		<mapper resource="mzw/mapper/BookDAOMapper.xml"/>
+	</mappers>
+</configuration>

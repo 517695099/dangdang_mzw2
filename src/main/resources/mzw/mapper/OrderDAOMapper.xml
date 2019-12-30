@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace: 指定当前mapper.xml管理的接口 全限定名
+	注意：一个mapper.xml只能管理一个接口
+-->
+<mapper namespace="mzw.dao.OrderDAO">
+	<sql id="orderquery">
+		id,order_no,total,create_date,user_id,address,name,status
+	</sql>
+	<select id="queryAllOrder" parameterType="Order" resultType="Order">
+		select <include refid="orderquery"/> from dd_order
+		<trim prefix="where"  prefixOverrides="and">
+			<if test="id!=null">
+				id=#{id}	
+			</if>
+			<if test="order_no!=null">
+				and order_no=#{order_no}
+			</if>
+			<if test="total!=null">
+				and total=#{total}
+			</if>
+			<if test="create_date!=null">
+				and create_date=#{create_date}
+			</if>
+			<if test="user_id!=null">
+				and user_id=#{user_id}
+			</if>
+			<if test="address!=null">
+				and address=#{address}
+			</if>
+			<if test="name!=null">
+				and name=#{name}
+			</if>
+			<if test="status_date!=null">
+				and status=#{status}
+			</if>
+		</trim>
+	</select>
+	
+	<!-- 插入订单 -->
+	<insert id="insertOrder" parameterType="Order">
+			insert into dd_order values(#{id},#{order_no},#{total},#{create_date},#{user_id},#{address},#{name},#{status})
+	</insert>
+	<resultMap type="Order" id="OrderResultMap">
+			<id column="f_id"  property="id"/>
+			<result column="order_no"  property="order_no"/>
+			<result column="total"  property="total"/>
+			<result column="status"  property="status"/>
+			<collection property="items" ofType="OrderItem">
+					<id column="id"  property="id"/>
+					<result column="name"  property="name"/>
+					<result column="price"  property="price"/>
+					<result column="dprice"  property="dprice"/>
+					<result column="cover"  property="cover"/>
+					<result column="count" property="count"/>
+			</collection>
+	</resultMap>
+	<select id="queryOrderDetail" resultMap="OrderResultMap">
+			select f.id f_id,f.order_no ,f.total ,f.status,s.* from dd_order f
+			join  dd_item s on f.id=s.order_id
+			where f.id=#{id}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

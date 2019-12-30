@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace: 指定当前mapper.xml管理的接口 全限定名
+	注意：一个mapper.xml只能管理一个接口
+-->
+<mapper namespace="mzw.dao.UserDAO">
+	<sql id="userlogin">
+		id,nickname,email,password,status,code,salt,create_date
+	</sql>
+	<select id="query" parameterType="User" resultType="User">
+		select <include refid="userlogin"/> from dd_user
+		<trim prefix="where"  prefixOverrides="and">
+			<if test="id!=null">
+				id=#{id}	
+			</if>
+			<if test="nickname!=null">
+				and nickname=#{nickname}
+			</if>
+			<if test="email!=null">
+				and email=#{email}
+			</if>
+			<if test="password!=null">
+				and password=#{password}
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<if test="code!=null">
+				and code=#{code}
+			</if>
+			<if test="salt!=null">
+				and salt=#{salt}
+			</if>
+			<if test="create_date!=null">
+				and create_date=#{create_date}
+			</if>
+		</trim>
+	</select>
+	<!-- 根据用户id 修改用户状态 -->
+	<update id="updateUser" parameterType="User">
+		update dd_user set status=#{status} where id = #{id}
+	</update>
+	<!-- 修改激活码 -->
+	<update id="updateCode"  parameterType="User">
+			update dd_user set code=#{code}  where id=#{id}
+	</update>
+	<!-- 注册用户 -->
+	<insert id="register" parameterType="User">
+			insert into dd_user values(#{id},#{nickname},#{email},#{password},#{status},#{code,jdbcType=VARCHAR},#{salt},#{create_date})
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

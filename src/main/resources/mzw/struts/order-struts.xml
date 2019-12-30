@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="order" extends="struts-default" namespace="/order">
+		 <interceptors>
+			<interceptor name="ad" class="mzw.interceptor.LoginInterceptor"></interceptor>
+			<interceptor-stack name="ads">
+					<interceptor-ref name="defaultStack"></interceptor-ref>
+					<interceptor-ref name="ad"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="ads"></default-interceptor-ref> 
+		<global-results>
+				<result name="error" type="redirect">/back/login.jsp</result>
+		</global-results>
+		<action name="o_*" class="mzw.action.OrderAction" method="{1}">
+			<result name="queryAllOrderSuccess">/back/order/show.jsp</result>
+			<result name="queryOrderDetailSuccess">/back/order/detail.jsp</result>
+		</action>
+	</package>			
+</struts>

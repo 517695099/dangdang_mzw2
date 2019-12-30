@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 后台 -->
+	<package name="category" extends="struts-default" namespace="/category">
+		 <interceptors>
+			<interceptor name="ad" class="mzw.interceptor.LoginInterceptor"></interceptor>
+			<interceptor-stack name="ads">
+					<interceptor-ref name="defaultStack"></interceptor-ref>
+					<interceptor-ref name="ad"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="ads"></default-interceptor-ref> 
+		<global-results>
+				<result name="error" type="redirect">/back/login.jsp</result>
+		</global-results>
+		<action name="query_*" class="mzw.action.CategoryAction" method="{1}">
+			<result name="queryAllSuccess">/back/category/show.jsp</result>
+			<result name="addFirstSuccess" type="chain">query_queryAll</result>
+			<result name="addFirstError" type="dispatcher">/back/category/add-first.jsp</result>
+			<result name="catchFirstSuccess">/back/category/add-second.jsp</result>
+			<result name="addSecondSuccess" type="chain">query_queryAll</result>
+			<result name="addSecondError" type="dispatcher">/back/category/add-second.jsp</result>
+			<result name="deleteCategoryError" type="chain">query_queryAll</result>
+			<result name="deleteCategorySuccess" type="chain">query_queryAll</result>
+		</action>
+		
+		<action name="exit" class="mzw.action.AdminAction" method="exit">
+			<result name="exitSuccess">/back/login.jsp</result>
+		</action>
+	</package>		
+	
+	<!-- 前台 -->
+	<package name="frontshow" extends="struts-default" namespace="/frontshow">
+
+			<action name="fs_*" class="mzw.action.CategoryAction" method="{1}">
+						<param name="showSize">3</param>
+						<result name="selectSecondSuccess"  type="dispatcher">/front/main/book_list.jsp</result>
+			</action>
+	</package>
+</struts>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="user" extends="struts-default" namespace="/user">
+		<action name="u_*" class="mzw.action.UserAction" method="{1}">
+			<result name="queryAllSuccess">/back/user/show.jsp</result>
+			<result name="updateStatusSuccess" type="redirectAction">u_queryAll</result>
+		</action>
+	</package>		
+	
+	<package name="frontuser" extends="struts-default" namespace="/frontuser">
+			<action name="fu_*" class="mzw.action.UserAction" method="{1}">
+						<result name="loginError" type="dispatcher">/front/user/login_form.jsp</result>
+		 				<result name="loginSuccess" type="chain">
+		 						<param name="namespace">/frontbook</param>
+		 						<param name="actionName">fb_main</param>
+		 				</result>
+		 				<result name="exitSuccess"  type="redirect">/front/user/login_form.jsp</result>
+		 				
+		 				<result name="updateCodeSuccess">/front/user/register_ok.jsp</result>
+		 				<result name="registerError">/front/user/register_form.jsp</result>
+		 				<result name="registerSuccess"  type="redirectAction">fu_sendEmail</result>
+		 				<result name="sendEmailSuccess">/front/user/verify_form.jsp</result>
+			</action>
+			<action name="getCode" class="mzw.action.UserAction" method="getCode"></action>
+	</package>	
+</struts>

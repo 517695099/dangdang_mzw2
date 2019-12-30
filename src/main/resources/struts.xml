@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<include file="mzw/struts/admin-struts.xml"></include>
+	<include file="mzw/struts/category-struts.xml"></include>	
+	<include file="mzw/struts/user-struts.xml"></include>
+	<include file="mzw/struts/order-struts.xml"></include>	
+	<include file="mzw/struts/book-struts.xml"></include>	
+	<include file="mzw/struts/orderitem-struts.xml"></include>
+	<include file="mzw/struts/cart-struts.xml"></include>			
+	<include file="mzw/struts/interceptor-struts.xml"></include>	
+</struts>
